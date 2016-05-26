@@ -7,9 +7,10 @@
 import React from 'react'
 import { AppRegistry } from 'react-native'
 import QuestionScreen from './js/QuestionScreen'
+import { questions } from './config'
 
 const Graduation = () => (
-  <QuestionScreen />
+  <QuestionScreen questions={questions} />
 )
 
 AppRegistry.registerComponent('Graduation', () => Graduation)

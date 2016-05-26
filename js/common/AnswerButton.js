@@ -5,14 +5,28 @@ import {
   TouchableHighlight,
 } from 'react-native'
 
-const AnswerButton = ({ children }) => (
-  <TouchableHighlight style={styles.button}>
-    <Text style={styles.text}>{children}</Text>
-  </TouchableHighlight>
-)
+const AnswerButton = ({ answer, clicked, onPress }) => {
+  const correctStyle = clicked && answer.correct && styles.correct
+  const incorrectStyle = clicked && !answer.correct && styles.incorrect
+
+  return (
+    <TouchableHighlight
+      underlayColor="#efefef"
+      style={[styles.button, correctStyle, incorrectStyle]}
+      onPress={() => onPress(answer)}
+    >
+      <Text style={styles.text}>{answer.text}</Text>
+    </TouchableHighlight>
+  )
+}
 
 AnswerButton.propTypes = {
-  children: PropTypes.node,
+  answer: PropTypes.shape({
+    text: PropTypes.string,
+    correct: PropTypes.bool,
+  }),
+  onPress: PropTypes.func,
+  clicked: PropTypes.bool,
 }
 
 const styles = StyleSheet.create({
@@ -21,7 +35,15 @@ const styles = StyleSheet.create({
     height: 88,
     justifyContent: 'center',
   },
+  correct: {
+    backgroundColor: 'green',
+  },
+  incorrect: {
+    backgroundColor: 'red',
+  },
   text: {
+    fontSize: 24,
+    fontWeight: '700',
     textAlign: 'center',
   },
 })

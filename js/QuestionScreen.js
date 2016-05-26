@@ -1,36 +1,81 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import {
   StyleSheet,
   Text,
   View,
 } from 'react-native'
-import Button from './common/AnswerButton'
+import AnswerButton from './common/AnswerButton'
 import LinearGradient from 'react-native-linear-gradient'
+import shuffle from 'lodash/shuffle'
 
 class QuestionScreen extends Component {
-  componentDidMount() {
+  static propTypes = {
+    questions: PropTypes.arrayOf(
+      PropTypes.shape({
+        question: PropTypes.string.isRequired,
+        answers: PropTypes.arrayOf(
+          PropTypes.string
+        ),
+      })
+    ).isRequired,
+  }
+
+  state = {
+    index: 0,
+    currentQuestion: this.getQuestion(0),
+  }
+
+  onPressAnswer = (answer) => {
+    console.log(answer)
+    this.setState({
+      pressedAnswer: answer,
+    })
+  }
+
+  getQuestion(questionIndex) {
+    const { questions } = this.props
+    const { question, answers } = questions[questionIndex]
+    const answerObjects = answers.map((answer, answerIndex) => ({
+      text: answer,
+      correct: answerIndex === 0,
+    }))
+    return {
+      question,
+      answers: shuffle(answerObjects),
+      correctAnswer: answerObjects[0],
+    }
   }
 
   render() {
+    const {
+      currentQuestion: {
+        question,
+        answers,
+      },
+      pressedAnswer,
+    } = this.state
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <View />
-          <Text>Spurning</Text>
-          <Text>1 af 10</Text>
+          <Text style={styles.headerTitle}>Spurning</Text>
+          <Text style={styles.headerText}>10</Text>
+          <Text style={styles.headerText}>1 af 10</Text>
         </View>
 
         <LinearGradient style={styles.question} colors={['#FFFFFF', '#E4E4E4']}>
-          <Text style={styles.questionText}>
-            Hvað er Berglind með mikinn pening í veskinu sínu?
-          </Text>
+          <Text style={styles.questionText}>{question}</Text>
         </LinearGradient>
 
         <View style={styles.answerContainer}>
-          <Button>Answer</Button>
-          <Button>Answer</Button>
-          <Button>Answer</Button>
-          <Button>Answer</Button>
+          {answers.map(answer => (
+            <AnswerButton
+              answer={answer}
+              onPress={this.onPressAnswer}
+              clicked={pressedAnswer === answer}
+              key={answer.text}
+            />
+          ))}
         </View>
       </View>
     )
@@ -46,7 +91,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
+    paddingHorizontal: 8,
     height: 44,
+  },
+  headerTitle: {
+    fontSize: 17,
+    position: 'absolute',
+    right: 0,
+    left: 0,
+    top: 12,
+    textAlign: 'center',
+  },
+  headerText: {
+    fontSize: 17,
   },
   question: {
     height: 190,
