@@ -26,6 +26,14 @@ class QuestionScreen extends Component {
 
   state = this.getStateForQuestion(0)
 
+  componentDidMount() {
+    this.countdown()
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
+  }
+
   onPressAnswer = async (answer) => {
     this.setState({
       pressedAnswer: answer,
@@ -78,10 +86,22 @@ class QuestionScreen extends Component {
     this.countdown()
   }
 
+  get timerActive() {
+    return this.timerVisible && !this.state.pressedAnswer
+  }
+
+  get timerVisible() {
+    return this.state.index !== 0
+  }
+
   countdown() {
     const { onFail } = this.props
 
     const tick = () => {
+      if (!this.timerActive) {
+        return
+      }
+
       const timeLeft = this.state.timeLeft - 1
       this.setState({ timeLeft })
 
@@ -91,14 +111,6 @@ class QuestionScreen extends Component {
     }
 
     this.timer = setInterval(tick, 1000)
-  }
-
-  componentDidMount() {
-    this.countdown()
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer)
   }
 
   render() {
@@ -119,7 +131,11 @@ class QuestionScreen extends Component {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Spurning</Text>
-          <Text style={styles.headerText}>{timeLeft}</Text>
+          <View>
+            {this.timerVisible &&
+              <Text style={styles.headerText}>{timeLeft}</Text>
+            }
+          </View>
           <Text style={styles.headerText}>{levelText}</Text>
         </View>
 
