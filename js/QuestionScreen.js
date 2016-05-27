@@ -82,14 +82,18 @@ class QuestionScreen extends Component {
         answers,
       },
       pressedAnswer,
+      index,
     } = this.state
+    const { questions } = this.props
+
+    const levelText = `${index + 1} af ${questions.length}`
 
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Spurning</Text>
           <Text style={styles.headerText}>10</Text>
-          <Text style={styles.headerText}>1 af 10</Text>
+          <Text style={styles.headerText}>{levelText}</Text>
         </View>
 
         <LinearGradient style={styles.question} colors={['#FFFFFF', '#E4E4E4']}>
