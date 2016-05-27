@@ -31,7 +31,7 @@ class App extends Component {
   renderWait() {
     const { nextAttempt } = this.state
     return (
-      <WaitScreen startTime={nextAttempt} />
+      <WaitScreen startTime={nextAttempt} onFinished={this.onWaitFinished} />
     )
   }
 
