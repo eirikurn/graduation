@@ -59,18 +59,20 @@ class QuestionScreen extends Component {
     const nextIndex = index + 1
     const isFinished = nextIndex >= questions.length
 
-    // Not finished. Start next level.
-    if (!isFinished) {
-      this.setState(this.getStateForQuestion(nextIndex))
+    // Incorrect answer. FAIL!
+    if (!pressedAnswer.correct) {
+      onFail(index)
       return
     }
 
-    // Finished. Fail or finished?
-    if (pressedAnswer.correct) {
+    // Finished. Show game over.
+    if (isFinished) {
       onFinish()
-    } else {
-      onFail(index)
+      return
     }
+
+    // Not finished. Show next level.
+    this.setState(this.getStateForQuestion(nextIndex))
   }
 
   render() {

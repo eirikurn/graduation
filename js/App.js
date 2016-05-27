@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import QuestionScreen from './QuestionScreen'
 import WaitScreen from './WaitScreen'
-import { questions } from '../config'
+import { questions, waitTime } from '../config'
 
 class App extends Component {
   state = {
@@ -10,7 +10,7 @@ class App extends Component {
   }
 
   onFail = failLevel => {
-    const nextAttempt = Date.now() + (failLevel + 1) * 60000
+    const nextAttempt = Date.now() + (failLevel + 1) * waitTime * 1000
     this.setState({
       nextAttempt,
     })

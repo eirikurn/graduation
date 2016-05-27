@@ -18,3 +18,5 @@ export const questions = [
     ],
   },
 ]
+
+export const waitTime = 1
