@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import QuestionScreen from './QuestionScreen'
+import WaitScreen from './WaitScreen'
 import { questions } from '../config'
 
 class App extends Component {
@@ -27,7 +28,18 @@ class App extends Component {
     })
   }
 
+  renderWait() {
+    const { nextAttempt } = this.state
+    return (
+      <WaitScreen startTime={nextAttempt} />
+    )
+  }
+
   render() {
+    const { nextAttempt } = this.state
+    if (nextAttempt !== null) {
+      return this.renderWait()
+    }
     return (
       <QuestionScreen
         onFinish={this.onFinish}
