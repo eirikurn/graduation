@@ -83,7 +83,6 @@ class QuestionScreen extends Component {
 
     // Not finished. Show next level.
     this.setState(this.getStateForQuestion(nextIndex))
-    this.countdown()
   }
 
   get timerActive() {

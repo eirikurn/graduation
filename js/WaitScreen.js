@@ -8,16 +8,15 @@ import shuffle from 'lodash/shuffle'
 import { failTexts } from '../config'
 
 const pad = (number) => {
-  let text = number.toString()
+  const text = number.toString()
   if (text.length === 1) {
     return `0${text}`
   }
   return text
 }
 
-const getTimeLeft = (startTime) => {
-  return (startTime - new Date()) / 1000
-}
+const getTimeLeft = (startTime) =>
+  (startTime - new Date()) / 1000
 
 class WaitScreen extends Component {
   static propTypes = {
@@ -26,7 +25,7 @@ class WaitScreen extends Component {
   }
 
   constructor(props) {
-    super(...arguments)
+    super(props)
 
     this.state = {
       timeLeft: getTimeLeft(props.startTime),
@@ -34,14 +33,12 @@ class WaitScreen extends Component {
     }
   }
 
-  componentWillReceiveProps(props) {
-    this.setState({
-      timeLeft: getTimeLeft(props.startTime)
-    })
-  }
-
   componentDidMount() {
     this.countdown()
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
   }
 
   countdown() {
@@ -55,10 +52,6 @@ class WaitScreen extends Component {
     }
 
     this.timer = setInterval(tick, 1000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer)
   }
 
   render() {
