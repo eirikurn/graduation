@@ -38,29 +38,24 @@ class WaitScreen extends Component {
   }
 
   componentDidMount() {
-    this.tick()
+    this.countdown()
   }
 
-  tick() {
-    this.timer = setTimeout(
-      () => {
-        const timeLeft = this.state.timeLeft - 1
-        this.setState({
-          timeLeft,
-        })
+  countdown() {
+    const tick = () => {
+      const timeLeft = this.state.timeLeft - 1
+      this.setState({ timeLeft })
 
-        if (timeLeft > 0) {
-          this.tick()
-        } else {
-          this.props.onFinished()
-        }
-      },
-      1000
-    )
+      if (timeLeft <= 0) {
+        this.props.onFinished()
+      }
+    }
+
+    this.timer = setInterval(tick, 1000)
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timer)
+    clearInterval(this.timer)
   }
 
   render() {

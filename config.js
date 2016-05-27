@@ -20,3 +20,5 @@ export const questions = [
 ]
 
 export const waitTime = 5
+
+export const questionTime = 10

@@ -8,6 +8,7 @@ import AnswerButton from './common/AnswerButton'
 import LinearGradient from 'react-native-linear-gradient'
 import shuffle from 'lodash/shuffle'
 import delay from './utility/delay'
+import { questionTime } from '../config'
 
 class QuestionScreen extends Component {
   static propTypes = {
@@ -50,6 +51,7 @@ class QuestionScreen extends Component {
         correctAnswer: answerObjects[0],
       },
       pressedAnswer: null,
+      timeLeft: questionTime,
     }
   }
 
@@ -73,6 +75,30 @@ class QuestionScreen extends Component {
 
     // Not finished. Show next level.
     this.setState(this.getStateForQuestion(nextIndex))
+    this.countdown()
+  }
+
+  countdown() {
+    const { onFail } = this.props
+
+    const tick = () => {
+      const timeLeft = this.state.timeLeft - 1
+      this.setState({ timeLeft })
+
+      if (timeLeft < 0) {
+        onFail(this.state.index)
+      }
+    }
+
+    this.timer = setInterval(tick, 1000)
+  }
+
+  componentDidMount() {
+    this.countdown()
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
   }
 
   render() {
@@ -83,6 +109,7 @@ class QuestionScreen extends Component {
       },
       pressedAnswer,
       index,
+      timeLeft,
     } = this.state
     const { questions } = this.props
 
@@ -92,7 +119,7 @@ class QuestionScreen extends Component {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Spurning</Text>
-          <Text style={styles.headerText}>10</Text>
+          <Text style={styles.headerText}>{timeLeft}</Text>
           <Text style={styles.headerText}>{levelText}</Text>
         </View>
 
