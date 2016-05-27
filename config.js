@@ -8,4 +8,13 @@ export const questions = [
       '0 kr',
     ],
   },
+  {
+    question: 'Hvað er Everest hátt?',
+    answers: [
+      '10.532 metrar',
+      '10.533 metrar',
+      '10.534 metrar',
+      '10.535 metrar',
+    ],
+  },
 ]

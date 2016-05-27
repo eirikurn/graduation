@@ -7,6 +7,7 @@ import {
 import AnswerButton from './common/AnswerButton'
 import LinearGradient from 'react-native-linear-gradient'
 import shuffle from 'lodash/shuffle'
+import delay from './utility/delay'
 
 class QuestionScreen extends Component {
   static propTypes = {
@@ -18,21 +19,23 @@ class QuestionScreen extends Component {
         ),
       })
     ).isRequired,
+    onFail: PropTypes.func,
+    onFinish: PropTypes.func,
   }
 
-  state = {
-    index: 0,
-    currentQuestion: this.getQuestion(0),
-  }
+  state = this.getStateForQuestion(0)
 
-  onPressAnswer = (answer) => {
-    console.log(answer)
+  onPressAnswer = async (answer) => {
     this.setState({
       pressedAnswer: answer,
     })
+
+    await delay(1000)
+
+    this.nextQuestion()
   }
 
-  getQuestion(questionIndex) {
+  getStateForQuestion(questionIndex) {
     const { questions } = this.props
     const { question, answers } = questions[questionIndex]
     const answerObjects = answers.map((answer, answerIndex) => ({
@@ -40,9 +43,33 @@ class QuestionScreen extends Component {
       correct: answerIndex === 0,
     }))
     return {
-      question,
-      answers: shuffle(answerObjects),
-      correctAnswer: answerObjects[0],
+      index: questionIndex,
+      currentQuestion: {
+        question,
+        answers: shuffle(answerObjects),
+        correctAnswer: answerObjects[0],
+      },
+      pressedAnswer: null,
+    }
+  }
+
+  nextQuestion() {
+    const { questions, onFail, onFinish } = this.props
+    const { index, pressedAnswer } = this.state
+    const nextIndex = index + 1
+    const isFinished = nextIndex >= questions.length
+
+    // Not finished. Start next level.
+    if (!isFinished) {
+      this.setState(this.getStateForQuestion(nextIndex))
+      return
+    }
+
+    // Finished. Fail or finished?
+    if (pressedAnswer.correct) {
+      onFinish()
+    } else {
+      onFail(index)
     }
   }
 

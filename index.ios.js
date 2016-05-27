@@ -6,13 +6,11 @@
 
 import React from 'react'
 import { AppRegistry } from 'react-native'
-import QuestionScreen from './js/QuestionScreen'
-import WaitScreen from './js/WaitScreen'
-import { questions } from './config'
+
+import App from './js/App'
 
 const Graduation = () => (
-  //<WaitScreen startTime={+new Date() + 60000} />
-  <QuestionScreen questions={questions} />
+  <App />
 )
 
 AppRegistry.registerComponent('Graduation', () => Graduation)
