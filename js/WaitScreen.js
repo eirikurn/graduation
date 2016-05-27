@@ -20,6 +20,7 @@ const getTimeLeft = (startTime) => {
 class WaitScreen extends Component {
   static propTypes = {
     startTime: PropTypes.number.isRequired,
+    onFinished: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -50,6 +51,8 @@ class WaitScreen extends Component {
 
         if (timeLeft > 0) {
           this.tick()
+        } else {
+          this.props.onFinished()
         }
       },
       1000
