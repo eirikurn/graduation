@@ -5,9 +5,10 @@ import {
   TouchableHighlight,
 } from 'react-native'
 
-const Button = ({ children, onPress, style }) => (
+const Button = ({ children, disabled, onPress, style }) => (
   <TouchableHighlight
     underlayColor="#efefef"
+    disabled={disabled}
     style={[styles.button, style]}
     onPress={onPress}
   >
@@ -18,6 +19,7 @@ const Button = ({ children, onPress, style }) => (
 Button.propTypes = {
   children: PropTypes.node,
   onPress: PropTypes.func,
+  disabled: PropTypes.bool,
   style: PropTypes.any,
 }
 

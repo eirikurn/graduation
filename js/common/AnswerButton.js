@@ -4,7 +4,7 @@ import {
 } from 'react-native'
 import Button from './Button'
 
-const AnswerButton = ({ answer, clicked, onPress }) => {
+const AnswerButton = ({ answer, clicked, onPress, ...rest }) => {
   const correctStyle = clicked && answer.correct && styles.correct
   const incorrectStyle = clicked && !answer.correct && styles.incorrect
 
@@ -12,6 +12,7 @@ const AnswerButton = ({ answer, clicked, onPress }) => {
     <Button
       style={[correctStyle, incorrectStyle]}
       onPress={() => onPress(answer)}
+      {...rest}
     >
       {answer.text}
     </Button>

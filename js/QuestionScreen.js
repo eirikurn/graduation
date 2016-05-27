@@ -131,6 +131,7 @@ class QuestionScreen extends Component {
           {answers.map(answer => (
             <AnswerButton
               answer={answer}
+              disabled={!!pressedAnswer}
               onPress={this.onPressAnswer}
               clicked={pressedAnswer === answer}
               key={answer.text}
