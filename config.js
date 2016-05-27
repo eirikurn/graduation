@@ -1,20 +1,40 @@
 export const questions = [
   {
+    // TODO: Re-confirm
     question: 'Hvað er Berglind með mikinn pening í veskinu sínu?',
     answers: [
-      '1.532 kr',
-      '3.123 kr',
-      '5.001 kr',
       '0 kr',
+      '1.560 kr',
+      '3.023 kr',
+      '5.003 kr',
     ],
   },
   {
-    question: 'Hvað er Everest hátt?',
+    // TODO: Re-confirm
+    question: 'Hvað eru margar Lottu sýningar planaðar í sumar?',
     answers: [
-      '10.532 metrar',
-      '10.533 metrar',
-      '10.534 metrar',
-      '10.535 metrar',
+      '63',
+      '62',
+      '93',
+      '92',
+    ],
+  },
+  {
+    question: 'Hvaða vikudag fæddist Hildur?',
+    answers: [
+      'Föstudag',
+      'Fimmtudag',
+      'Miðvikudag',
+      'Þriðjudag',
+    ],
+  },
+  {
+    question: 'Hvað eru margir þættir í allri Friends seríunni?',
+    answers: [
+      '236',
+      '240',
+      '244',
+      '248',
     ],
   },
 ]
