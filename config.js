@@ -45,4 +45,4 @@ export const failTexts = [
 ]
 
 export const waitTime = 5
-export const questionTime = 10
+export const questionTime = 7
