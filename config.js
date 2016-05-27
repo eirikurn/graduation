@@ -19,6 +19,10 @@ export const questions = [
   },
 ]
 
-export const waitTime = 5
+export const failTexts = [
+  'Ahh, þar fór í verra. Nú þarftu bara að bíða smá…',
+  'Úps, þetta var lélegt gisk. Reyndu aftur eftir smá…',
+]
 
+export const waitTime = 5
 export const questionTime = 10

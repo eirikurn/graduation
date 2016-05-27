@@ -4,6 +4,8 @@ import {
   Text,
   View,
 } from 'react-native'
+import shuffle from 'lodash/shuffle'
+import { failTexts } from '../config'
 
 const pad = (number) => {
   let text = number.toString()
@@ -27,7 +29,8 @@ class WaitScreen extends Component {
     super(...arguments)
 
     this.state = {
-      timeLeft: getTimeLeft(props.startTime)
+      timeLeft: getTimeLeft(props.startTime),
+      failText: shuffle(failTexts)[0],
     }
   }
 
@@ -59,7 +62,7 @@ class WaitScreen extends Component {
   }
 
   render() {
-    const { timeLeft } = this.state
+    const { timeLeft, failText } = this.state
     const minutes = Math.floor(timeLeft / 60)
     const seconds = Math.floor(timeLeft % 60)
 
@@ -68,7 +71,7 @@ class WaitScreen extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <Text style={styles.text}>Ahh, þar fór í verra. Nú þarftu bara að bíða smá…</Text>
+          <Text style={styles.text}>{failText}</Text>
         </View>
 
         <View>
