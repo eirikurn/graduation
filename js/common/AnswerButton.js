@@ -1,22 +1,20 @@
 import React, { PropTypes } from 'react'
 import {
   StyleSheet,
-  Text,
-  TouchableHighlight,
 } from 'react-native'
+import Button from './Button'
 
 const AnswerButton = ({ answer, clicked, onPress }) => {
   const correctStyle = clicked && answer.correct && styles.correct
   const incorrectStyle = clicked && !answer.correct && styles.incorrect
 
   return (
-    <TouchableHighlight
-      underlayColor="#efefef"
-      style={[styles.button, correctStyle, incorrectStyle]}
+    <Button
+      style={[correctStyle, incorrectStyle]}
       onPress={() => onPress(answer)}
     >
-      <Text style={styles.text}>{answer.text}</Text>
-    </TouchableHighlight>
+      {answer.text}
+    </Button>
   )
 }
 
@@ -30,21 +28,11 @@ AnswerButton.propTypes = {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#ffffff',
-    height: 88,
-    justifyContent: 'center',
-  },
   correct: {
     backgroundColor: 'green',
   },
   incorrect: {
     backgroundColor: 'red',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: '700',
-    textAlign: 'center',
   },
 })
 

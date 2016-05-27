@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import QuestionScreen from './QuestionScreen'
 import WaitScreen from './WaitScreen'
+import VictoryScreen from './VictoryScreen'
 import { questions, waitTime } from '../config'
 import { loadAttempt, saveAttempt } from './state'
 
@@ -30,8 +31,9 @@ class App extends Component {
     })
   }
 
-  onWaitFinished = () => {
+  reset = () => {
     this.setState({
+      finished: false,
       nextAttempt: null,
     })
 
@@ -46,24 +48,27 @@ class App extends Component {
       nextAttempt,
     })
     if (nextAttempt < Date.now()) {
-      this.onWaitFinished()
+      this.reset()
     }
   }
 
   renderWait() {
     const { nextAttempt } = this.state
     return (
-      <WaitScreen startTime={nextAttempt} onFinished={this.onWaitFinished} />
+      <WaitScreen startTime={nextAttempt} onFinished={this.reset} />
     )
   }
 
   render() {
-    const { nextAttempt, loading } = this.state
+    const { nextAttempt, loading, finished } = this.state
     if (loading) {
       return null
     }
     if (nextAttempt !== null) {
       return this.renderWait()
+    }
+    if (finished) {
+      return <VictoryScreen onRestart={this.reset} />
     }
     return (
       <QuestionScreen
