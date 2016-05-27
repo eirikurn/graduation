@@ -19,4 +19,4 @@ export const questions = [
   },
 ]
 
-export const waitTime = 1
+export const waitTime = 5
