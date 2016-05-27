@@ -63,7 +63,7 @@ class WaitScreen extends Component {
   render() {
     const { timeLeft } = this.state
     const minutes = Math.floor(timeLeft / 60)
-    const seconds = timeLeft % 60
+    const seconds = Math.floor(timeLeft % 60)
 
     const displayTime = `${pad(minutes)}:${pad(seconds)}`
 
