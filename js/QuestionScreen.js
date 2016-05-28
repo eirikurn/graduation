@@ -3,12 +3,16 @@ import {
   StyleSheet,
   Text,
   View,
+  Animated,
+  Easing,
 } from 'react-native'
+import CountdownPie from './common/CountdownPie'
 import AnswerButton from './common/AnswerButton'
 import LinearGradient from 'react-native-linear-gradient'
 import shuffle from 'lodash/shuffle'
 import delay from './utility/delay'
 import { questionTime } from '../config'
+const AnimatedCountdownPie = Animated.createAnimatedComponent(CountdownPie)
 
 class QuestionScreen extends Component {
   static propTypes = {
@@ -30,11 +34,17 @@ class QuestionScreen extends Component {
 
   componentDidMount() {
     const { navigator } = this.props
-    this.countdown()
 
     this.listeners.push(
       navigator.navigationContext.addListener('willfocus', this.onWillFocus)
     )
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { timeLeft } = this.state
+    if (timeLeft && timeLeft !== prevState.timeLeft) {
+      this.startCountdown()
+    }
   }
 
   componentWillUnmount() {
@@ -53,9 +63,31 @@ class QuestionScreen extends Component {
       pressedAnswer: answer,
     })
 
+    const { timeLeft } = this.state
+    if (timeLeft) {
+      timeLeft.stopAnimation()
+    }
+
     await delay(1000)
 
     this.nextQuestion()
+  }
+
+  onFail = () => {
+    this.props.onFail(this.state.index)
+  }
+
+  startCountdown() {
+    const { timeLeft } = this.state
+    this.animation = Animated.timing(timeLeft, {
+      toValue: 0,
+      duration: questionTime * 1000,
+      easing: Easing.linear,
+    }).start(({ finished }) => {
+      if (finished) {
+        this.onFail()
+      }
+    })
   }
 
   getStateForQuestion(questionIndex) {
@@ -73,19 +105,19 @@ class QuestionScreen extends Component {
         correctAnswer: answerObjects[0],
       },
       pressedAnswer: null,
-      timeLeft: questionTime,
+      timeLeft: questionIndex > 0 && new Animated.Value(1),
     }
   }
 
   nextQuestion() {
-    const { questions, onFail, onFinish } = this.props
+    const { questions, onFinish } = this.props
     const { index, pressedAnswer } = this.state
     const nextIndex = index + 1
     const isFinished = nextIndex >= questions.length
 
     // Incorrect answer. FAIL!
     if (!pressedAnswer.correct) {
-      onFail(index)
+      this.onFail()
       return
     }
 
@@ -99,31 +131,8 @@ class QuestionScreen extends Component {
     this.setState(this.getStateForQuestion(nextIndex))
   }
 
-  get timerActive() {
-    return this.timerVisible && !this.state.pressedAnswer
-  }
-
   get timerVisible() {
     return this.state.index !== 0
-  }
-
-  countdown() {
-    const { onFail } = this.props
-
-    const tick = () => {
-      if (!this.timerActive) {
-        return
-      }
-
-      const timeLeft = this.state.timeLeft - 1
-      this.setState({ timeLeft })
-
-      if (timeLeft < 0) {
-        onFail(this.state.index)
-      }
-    }
-
-    this.timer = setInterval(tick, 1000)
   }
 
   render() {
@@ -146,7 +155,11 @@ class QuestionScreen extends Component {
           <Text style={styles.headerTitle}>Spurning</Text>
           <View>
             {this.timerVisible &&
-              <Text style={styles.headerText}>{timeLeft}</Text>
+              <AnimatedCountdownPie
+                size={24}
+                totalTime={questionTime}
+                progress={timeLeft}
+              />
             }
           </View>
           <Text style={styles.headerText}>{levelText}</Text>
