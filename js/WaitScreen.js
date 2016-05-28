@@ -2,73 +2,77 @@ import React, { Component, PropTypes } from 'react'
 import {
   StyleSheet,
   Text,
+  Image,
   View,
+  Dimensions,
+  Animated,
+  Easing,
 } from 'react-native'
-import shuffle from 'lodash/shuffle'
-import { failTexts } from '../config'
+import sample from 'lodash/sample'
+import { AnimatedCountdownPie } from './common/CountdownPie'
+import { failTexts, failImages } from '../config'
 
-const pad = (number) => {
-  const text = number.toString()
-  if (text.length === 1) {
-    return `0${text}`
-  }
-  return text
-}
-
-const getTimeLeft = (startTime) =>
-  (startTime - new Date()) / 1000
+const { width: screenWidth } = Dimensions.get('window')
 
 class WaitScreen extends Component {
   static propTypes = {
     waitUntil: PropTypes.number.isRequired,
+    totalTime: PropTypes.number.isRequired,
     onFinished: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props)
 
+    const timeRemaining = Math.max(0, props.waitUntil - Date.now())
     this.state = {
-      timeLeft: getTimeLeft(props.waitUntil),
-      failText: shuffle(failTexts)[0],
+      timeRemaining,
+      progress: new Animated.Value(timeRemaining / props.totalTime),
+      failText: sample(failTexts),
+      failImage: sample(failImages),
     }
   }
 
   componentDidMount() {
-    this.countdown()
+    this.startCountdown()
   }
 
   componentWillUnmount() {
     clearInterval(this.timer)
   }
 
-  countdown() {
-    const tick = () => {
-      const timeLeft = Math.max(this.state.timeLeft - 1, 0)
-      this.setState({ timeLeft })
-
-      if (timeLeft <= 0) {
-        this.props.onFinished()
-      }
-    }
-
-    this.timer = setInterval(tick, 1000)
+  startCountdown() {
+    const { progress, timeRemaining } = this.state
+    const { onFinished } = this.props
+    Animated.timing(progress, {
+      toValue: 0,
+      duration: timeRemaining,
+      easing: Easing.linear,
+    }).start(onFinished)
   }
 
   render() {
-    const { timeLeft, failText } = this.state
-    const minutes = Math.floor(timeLeft / 60)
-    const seconds = Math.floor(timeLeft % 60)
-
-    const displayTime = `${pad(minutes)}:${pad(seconds)}`
+    const { failText, failImage, progress } = this.state
+    const { totalTime } = this.props
 
     return (
       <View style={styles.container}>
-        <View>
-          <Text style={styles.text}>{failText}</Text>
+        <View style={[{ height: screenWidth }]}>
+          <Image style={styles.image} source={failImage} />
+          <View style={styles.countdown}>
+            <AnimatedCountdownPie
+              style={styles.countdown}
+              size={screenWidth * 0.3}
+              progress={progress}
+              totalTime={totalTime}
+              strokeWidth={5}
+              color="white"
+              minuteFormat
+            />
+          </View>
         </View>
-
-        <View>
-          <Text style={styles.countdown}>{displayTime}</Text>
+        <View style={styles.bottom}>
+          <Text style={styles.text}>{failText}</Text>
         </View>
       </View>
     )
@@ -79,18 +83,36 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#E4E4E4',
     flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
+  },
+  image: {
+    flex: 1,
+    height: null,
+    width: null,
+  },
+  bottom: {
+    backgroundColor: 'black',
+    flex: 1,
     justifyContent: 'center',
-    padding: 20,
   },
   text: {
+    color: '#eee',
     fontSize: 38,
     textAlign: 'center',
-    marginBottom: 70,
+    paddingHorizontal: 20,
   },
   countdown: {
-    fontSize: 60,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    opacity: 0.5,
+    position: 'absolute',
+    padding: 10,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
 })
 

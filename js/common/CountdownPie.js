@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Animated,
 } from 'react-native'
 import {
   Surface,
@@ -14,41 +15,69 @@ import {
 class CountdownPie extends Component {
   static propTypes = {
     size: PropTypes.number.isRequired,
-    stroke: PropTypes.string,
+    color: PropTypes.string,
     strokeWidth: PropTypes.number,
     progress: PropTypes.number,
     totalTime: PropTypes.number.isRequired,
+    minuteFormat: PropTypes.bool,
   }
 
   static defaultProps = {
     progress: 1,
     strokeWidth: 2,
-    stroke: 'black',
+    color: 'black',
+    minuteFormat: false,
+  }
+
+  getFontSize() {
+    const { size, minuteFormat } = this.props
+    return minuteFormat ? size * 0.2 : size * 0.5
+  }
+
+  getText() {
+    const { totalTime, progress, minuteFormat } = this.props
+    const secondsRemaining = totalTime * progress / 1000
+    if (minuteFormat) {
+      const minutes = Math.floor(secondsRemaining / 60)
+      const seconds = Math.floor(secondsRemaining % 60)
+      return `${pad(minutes)}:${pad(seconds)}`
+    }
+
+    return Math.floor(secondsRemaining)
   }
 
   render() {
-    const { size, stroke, totalTime, strokeWidth, progress } = this.props
+    const {
+      size,
+      color,
+      strokeWidth,
+      progress,
+    } = this.props
     const radius = size / 2 - strokeWidth / 2
     const path = (
       createPath().moveTo(0, -radius)
         .arc(0, radius * 2, radius)
         .arc(0, radius * -2, radius)
     )
-    const text = Math.floor(totalTime * progress)
+
+
     return (
       <View style={[styles.container, { width: size, height: size }]}>
         <Surface style={styles.surface} width={size} height={size}>
           <Group x={size / 2} y={size / 2}>
             <Shape
               d={path}
-              stroke={stroke}
+              strokeColor="red"
+              stroke={color}
               strokeCap="butt"
               strokeWidth={strokeWidth}
-              strokeDash={[radius * 2 * Math.PI * progress, 700]}
+              strokeDash={[radius * 2 * Math.PI * progress, radius * 2 * Math.PI]}
             />
           </Group>
         </Surface>
-        <Text style={[{ fontSize: size / 2 }]}>{text}</Text>
+        <Text style={[{ color, fontSize: this.getFontSize() }]}>
+          {this.getText()}
+        </Text>
       </View>
     )
   }
@@ -56,6 +85,7 @@ class CountdownPie extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -66,4 +96,14 @@ const styles = StyleSheet.create({
   },
 })
 
+
+const pad = (number) => {
+  const text = number.toString()
+  if (text.length === 1) {
+    return `0${text}`
+  }
+  return text
+}
+
 export default CountdownPie
+export const AnimatedCountdownPie = Animated.createAnimatedComponent(CountdownPie)

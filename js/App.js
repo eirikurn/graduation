@@ -19,10 +19,11 @@ class App extends Component {
   }
 
   onFail = async failLevel => {
-    const nextAttempt = Date.now() + (failLevel + 1) * waitTime * 1000
+    const totalTime = (failLevel + 1) * waitTime
+    const waitUntil = Date.now() + totalTime
 
-    this.refs.navigator.push({ waitUntil: nextAttempt })
-    saveAttempt(nextAttempt)
+    this.refs.navigator.push({ waitUntil, totalTime })
+    saveAttempt({ waitUntil, totalTime })
   }
 
   onFinish = () => {
@@ -34,13 +35,13 @@ class App extends Component {
   }
 
   async loadState() {
-    const nextAttempt = await loadAttempt()
+    const { waitUntil, totalTime } = await loadAttempt()
 
     const initialStack = [
       { questions },
     ]
-    if (nextAttempt != null && nextAttempt >= Date.now()) {
-      initialStack.push({ waitUntil: nextAttempt })
+    if (waitUntil != null && waitUntil >= Date.now()) {
+      initialStack.push({ waitUntil, totalTime })
     }
 
     this.setState({
@@ -50,7 +51,7 @@ class App extends Component {
 
   renderScene = (route, navigator) => {
     if (route.waitUntil) {
-      return <WaitScreen waitUntil={route.waitUntil} onFinished={this.reset} />
+      return <WaitScreen {...route} onFinished={this.reset} />
     }
     if (route.finished) {
       return <VictoryScreen onRestart={this.reset} />

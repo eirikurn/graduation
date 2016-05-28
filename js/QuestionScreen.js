@@ -6,13 +6,12 @@ import {
   Animated,
   Easing,
 } from 'react-native'
-import CountdownPie from './common/CountdownPie'
+import { AnimatedCountdownPie } from './common/CountdownPie'
 import AnswerButton from './common/AnswerButton'
 import LinearGradient from 'react-native-linear-gradient'
 import shuffle from 'lodash/shuffle'
 import delay from './utility/delay'
 import { questionTime } from '../config'
-const AnimatedCountdownPie = Animated.createAnimatedComponent(CountdownPie)
 
 class QuestionScreen extends Component {
   static propTypes = {
@@ -101,7 +100,7 @@ class QuestionScreen extends Component {
     const { timeLeft } = this.state
     this.animation = Animated.timing(timeLeft, {
       toValue: 0,
-      duration: questionTime * 1000,
+      duration: questionTime,
       easing: Easing.linear,
     }).start(({ finished }) => {
       if (finished) {
@@ -210,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   question: {
-    height: 190,
+    height: 220,
     justifyContent: 'center',
     padding: 10,
   },
