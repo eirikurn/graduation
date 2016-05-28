@@ -8,11 +8,11 @@ import Button from './common/Button'
 
 const VictoryScreen = ({ onRestart }) => (
   <View style={styles.container}>
-    <Text style={styles.heading}>GAME OVER</Text>
+    <Text style={styles.heading}>LEIK LOKIÐ</Text>
     <Text style={styles.text}>Til hamingju! Þú svaraðir öllum spurningum rétt.</Text>
     <Text style={styles.text}>
       Í útskriftargjöf færð þú aðgang að Apple Developer Program.
-      Þá getur þú búið til iOS forrit, gefið út og grætt milljónir.
+      Nú getur þú búið til iOS forrit, gefið út og grætt milljónir.
     </Text>
     <Text style={styles.credit}>
       Eiríkur Berglind Alexander Andrea Ægir Waleska Elisabeth Perla

@@ -20,18 +20,32 @@ class QuestionScreen extends Component {
         ),
       })
     ).isRequired,
+    navigator: PropTypes.object,
     onFail: PropTypes.func,
     onFinish: PropTypes.func,
   }
 
+  listeners = []
   state = this.getStateForQuestion(0)
 
   componentDidMount() {
+    const { navigator } = this.props
     this.countdown()
+
+    this.listeners.push(
+      navigator.navigationContext.addListener('willfocus', this.onWillFocus)
+    )
   }
 
   componentWillUnmount() {
     clearInterval(this.timer)
+    this.listeners.forEach(listener => listener.remove())
+  }
+
+  onWillFocus = event => {
+    if (event.data.route.questions) {
+      this.setState(this.getStateForQuestion(0))
+    }
   }
 
   onPressAnswer = async (answer) => {

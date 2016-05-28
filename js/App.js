@@ -1,4 +1,8 @@
 import React, { Component } from 'react'
+import {
+  StyleSheet,
+  Navigator,
+} from 'react-native'
 import QuestionScreen from './QuestionScreen'
 import WaitScreen from './WaitScreen'
 import VictoryScreen from './VictoryScreen'
@@ -7,9 +11,7 @@ import { loadAttempt, saveAttempt } from './state'
 
 class App extends Component {
   state = {
-    loading: true,
-    nextAttempt: null,
-    finished: false,
+    initialStack: null,
   }
 
   componentDidMount() {
@@ -18,66 +20,74 @@ class App extends Component {
 
   onFail = async failLevel => {
     const nextAttempt = Date.now() + (failLevel + 1) * waitTime * 1000
-    this.setState({
-      nextAttempt,
-    })
 
+    this.refs.navigator.push({ waitUntil: nextAttempt })
     saveAttempt(nextAttempt)
   }
 
   onFinish = () => {
-    this.setState({
-      finished: true,
-    })
+    this.refs.navigator.push({ finished: true })
   }
 
   reset = () => {
-    this.setState({
-      finished: false,
-      nextAttempt: null,
-    })
-
-    saveAttempt(null)
+    this.refs.navigator.pop()
   }
 
   async loadState() {
     const nextAttempt = await loadAttempt()
 
+    const initialStack = [
+      { questions },
+    ]
+    if (nextAttempt != null && nextAttempt >= Date.now()) {
+      initialStack.push({ waitUntil: nextAttempt })
+    }
+
     this.setState({
-      loading: false,
-      nextAttempt,
+      initialStack,
     })
-    if (nextAttempt < Date.now()) {
-      this.reset()
-    }
   }
 
-  renderWait() {
-    const { nextAttempt } = this.state
-    return (
-      <WaitScreen startTime={nextAttempt} onFinished={this.reset} />
-    )
-  }
-
-  render() {
-    const { nextAttempt, loading, finished } = this.state
-    if (loading) {
-      return null
+  renderScene = (route, navigator) => {
+    if (route.waitUntil) {
+      return <WaitScreen waitUntil={route.waitUntil} onFinished={this.reset} />
     }
-    if (nextAttempt !== null) {
-      return this.renderWait()
-    }
-    if (finished) {
+    if (route.finished) {
       return <VictoryScreen onRestart={this.reset} />
     }
     return (
       <QuestionScreen
+        navigator={navigator}
         onFinish={this.onFinish}
         onFail={this.onFail}
         questions={questions}
       />
     )
   }
+
+  render() {
+    const { initialStack } = this.state
+    if (!initialStack) {
+      return null
+    }
+
+    return (
+      <Navigator
+        ref="navigator"
+        navigationBar={false}
+        style={styles.container}
+        configureScene={() => Navigator.SceneConfigs.FloatFromBottom}
+        initialRouteStack={initialStack}
+        renderScene={this.renderScene}
+      />
+    )
+  }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+})
 
 export default App

@@ -20,7 +20,7 @@ const getTimeLeft = (startTime) =>
 
 class WaitScreen extends Component {
   static propTypes = {
-    startTime: PropTypes.number.isRequired,
+    waitUntil: PropTypes.number.isRequired,
     onFinished: PropTypes.func.isRequired,
   }
 
@@ -28,7 +28,7 @@ class WaitScreen extends Component {
     super(props)
 
     this.state = {
-      timeLeft: getTimeLeft(props.startTime),
+      timeLeft: getTimeLeft(props.waitUntil),
       failText: shuffle(failTexts)[0],
     }
   }
@@ -43,7 +43,7 @@ class WaitScreen extends Component {
 
   countdown() {
     const tick = () => {
-      const timeLeft = this.state.timeLeft - 1
+      const timeLeft = Math.max(this.state.timeLeft - 1, 0)
       this.setState({ timeLeft })
 
       if (timeLeft <= 0) {
@@ -77,6 +77,7 @@ class WaitScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#E4E4E4',
     flex: 1,
     alignItems: 'center',
     flexDirection: 'column',
