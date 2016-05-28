@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react'
+import React, { PropTypes, Component } from 'react'
 import {
   View,
   Text,
@@ -11,7 +11,21 @@ import {
   Path as createPath,
 } from 'ReactNativeART'
 
-const CountdownPie = class extends React.Component {
+class CountdownPie extends Component {
+  static propTypes = {
+    size: PropTypes.number.isRequired,
+    stroke: PropTypes.string,
+    strokeWidth: PropTypes.number,
+    progress: PropTypes.number,
+    totalTime: PropTypes.number.isRequired,
+  }
+
+  static defaultProps = {
+    progress: 1,
+    strokeWidth: 2,
+    stroke: 'black',
+  }
+
   render() {
     const { size, stroke, totalTime, strokeWidth, progress } = this.props
     const radius = size / 2 - strokeWidth / 2
@@ -38,20 +52,6 @@ const CountdownPie = class extends React.Component {
       </View>
     )
   }
-}
-
-CountdownPie.propTypes = {
-  size: PropTypes.number.isRequired,
-  stroke: PropTypes.string,
-  strokeWidth: PropTypes.number,
-  progress: PropTypes.number,
-  totalTime: PropTypes.number.isRequired,
-}
-
-CountdownPie.defaultProps = {
-  progress: 1,
-  strokeWidth: 2,
-  stroke: 'black',
 }
 
 const styles = StyleSheet.create({

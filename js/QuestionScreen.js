@@ -29,14 +29,13 @@ class QuestionScreen extends Component {
     onFinish: PropTypes.func,
   }
 
-  listeners = []
   state = this.getStateForQuestion(0)
 
   componentDidMount() {
-    const { navigator } = this.props
+    const { navigationContext } = this.props.navigator
 
     this.listeners.push(
-      navigator.navigationContext.addListener('willfocus', this.onWillFocus)
+      navigationContext.addListener('willfocus', this.onWillFocus)
     )
   }
 
@@ -77,19 +76,6 @@ class QuestionScreen extends Component {
     this.props.onFail(this.state.index)
   }
 
-  startCountdown() {
-    const { timeLeft } = this.state
-    this.animation = Animated.timing(timeLeft, {
-      toValue: 0,
-      duration: questionTime * 1000,
-      easing: Easing.linear,
-    }).start(({ finished }) => {
-      if (finished) {
-        this.onFail()
-      }
-    })
-  }
-
   getStateForQuestion(questionIndex) {
     const { questions } = this.props
     const { question, answers } = questions[questionIndex]
@@ -107,6 +93,21 @@ class QuestionScreen extends Component {
       pressedAnswer: null,
       timeLeft: questionIndex > 0 && new Animated.Value(1),
     }
+  }
+
+  listeners = []
+
+  startCountdown() {
+    const { timeLeft } = this.state
+    this.animation = Animated.timing(timeLeft, {
+      toValue: 0,
+      duration: questionTime * 1000,
+      easing: Easing.linear,
+    }).start(({ finished }) => {
+      if (finished) {
+        this.onFail()
+      }
+    })
   }
 
   nextQuestion() {
